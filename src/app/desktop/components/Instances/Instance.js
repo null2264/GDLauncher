@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo } from 'react';
 import { transparentize } from 'polished';
 import styled, { keyframes } from 'styled-components';
 import { promises as fs } from 'fs';
+import { notification } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import path from 'path';
 import { ipcRenderer } from 'electron';
@@ -32,8 +33,8 @@ import { FABRIC, FORGE, VANILLA } from '../../../../common/utils/constants';
 
 const Container = styled.div`
   position: relative;
-  width: 180px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   transform: ${p =>
     p.isHovered && !p.installing
       ? 'scale3d(1.1, 1.1, 1.1)'
@@ -82,7 +83,7 @@ const InstanceContainer = styled.div`
   color: ${props => props.theme.palette.text.secondary};
   font-weight: 600;
   background-size: cover;
-  border-radius: 4px;
+  border-radius: 20px;
   margin: 10px;
 `;
 
@@ -98,7 +99,7 @@ const HoverContainer = styled.div`
   padding: 10px;
   text-align: center;
   font-weight: 800;
-  border-radius: 4px;
+  border-radius: 20px;
   transition: opacity 150ms ease-in-out;
   width: 100%;
   height: 100%;
@@ -180,6 +181,11 @@ const Instance = ({ instanceName }) => {
   }, [instance.background, instancesPath, instanceName]);
 
   const startInstance = () => {
+    notification.open({
+      message: 'Notification Title',
+      closeIcon: null
+    });
+
     if (isInQueue || isPlaying) return;
     dispatch(launchInstance(instanceName));
   };

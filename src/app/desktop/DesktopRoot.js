@@ -5,7 +5,7 @@ import { Switch } from 'react-router';
 import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
-import { message } from 'antd';
+import { message, notification } from 'antd';
 import RouteWithSubRoutes from '../../common/components/RouteWithSubRoutes';
 import {
   loginWithAccessToken,
@@ -44,12 +44,25 @@ const Container = styled.div`
   position: absolute;
   top: ${props => props.theme.sizes.height.systemNavbar}px;
   height: calc(100vh - ${props => props.theme.sizes.height.systemNavbar}px);
+  flex: 1 0;
   width: 100vw;
+  display: flex;
+  transition: transform 0.2s;
+  transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: transform;
+`;
+
+const InnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   transition: transform 0.2s;
   transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
   will-change: transform;
+`;
+
+const Sidebar = styled.div`
+  min-width: 250px;
+  background: ${props => props.theme.palette.grey[900]};
 `;
 
 function DesktopRoot({ store }) {
@@ -65,6 +78,12 @@ function DesktopRoot({ store }) {
   message.config({
     top: 45,
     maxCount: 1
+  });
+
+  notification.config({
+    placement: 'bottomLeft',
+    bottom: 50,
+    duration: 0
   });
 
   const init = async () => {
@@ -168,13 +187,16 @@ function DesktopRoot({ store }) {
       <SystemNavbar />
       <Message />
       <Container style={contentStyle}>
-        <GlobalStyles />
-        <RouteBackground />
-        <Switch>
-          {routes.map((route, i) => (
-            <RouteWithSubRoutes key={i} {...route} /> // eslint-disable-line
-          ))}
-        </Switch>
+        <InnerContainer>
+          <GlobalStyles />
+          <RouteBackground />
+          <Switch>
+            {routes.map((route, i) => (
+              <RouteWithSubRoutes key={i} {...route} /> // eslint-disable-line
+            ))}
+          </Switch>
+        </InnerContainer>
+        <Sidebar></Sidebar>
       </Container>
     </Wrapper>
   );

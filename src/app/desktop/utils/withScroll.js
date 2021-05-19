@@ -7,7 +7,7 @@ const withScroll = Component => {
         css={`
           flex-grow: 1;
           overflow-y: auto;
-          padding: 10px 0;
+          padding: 10px 20px;
         `}
       >
         <div

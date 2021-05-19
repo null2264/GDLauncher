@@ -58,11 +58,30 @@ const InnerContainer = styled.div`
   transition: transform 0.2s;
   transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
   will-change: transform;
+  flex: 1 0 auto;
+  width: calc(100vw - 250px);
 `;
 
 const Sidebar = styled.div`
-  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
   background: ${props => props.theme.palette.grey[900]};
+  justify-content: flex-end;
+`;
+
+const NotificationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  padding: 10px;
+  div {
+    background: ${props => props.theme.palette.grey[800]};
+    border: 2px solid ${props => props.theme.palette.colors.green};
+    border-radius: 5px;
+    height: 50px;
+    width: 100%;
+  }
 `;
 
 function DesktopRoot({ store }) {
@@ -196,7 +215,13 @@ function DesktopRoot({ store }) {
             ))}
           </Switch>
         </InnerContainer>
-        <Sidebar></Sidebar>
+        <Sidebar>
+          <div></div>
+          <hr />
+          <NotificationContainer>
+            <div></div>
+          </NotificationContainer>
+        </Sidebar>
       </Container>
     </Wrapper>
   );

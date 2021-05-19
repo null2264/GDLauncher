@@ -37,7 +37,7 @@ function downloadQueue(state = {}, action) {
         [action.instanceName]: {
           loader: action.loader,
           manifest: action.manifest,
-          filesToDownload: [],
+          filesToDownload: action.filesToDownload,
           steps: [],
           ...action.settings
         }

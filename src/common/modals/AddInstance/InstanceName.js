@@ -149,7 +149,7 @@ const InstanceName = ({
           source: version?.source
         };
 
-        dispatch(
+        await dispatch(
           addToQueue(
             localInstanceName,
             loader,
@@ -166,7 +166,7 @@ const InstanceName = ({
           projectID: version?.projectID,
           source: version?.source
         };
-        dispatch(
+        await dispatch(
           addToQueue(
             localInstanceName,
             loader,
@@ -182,7 +182,7 @@ const InstanceName = ({
           fileID: version?.fileID
         };
 
-        dispatch(
+        await dispatch(
           addToQueue(
             localInstanceName,
             loader,
@@ -253,7 +253,7 @@ const InstanceName = ({
         imageURL
       );
 
-      dispatch(
+      await dispatch(
         addToQueue(
           localInstanceName,
           loader,
@@ -282,7 +282,7 @@ const InstanceName = ({
           )
         };
 
-        dispatch(addToQueue(localInstanceName, loader, manifest));
+        await dispatch(addToQueue(localInstanceName, loader, manifest));
       } else if (version?.loaderType === FABRIC) {
         const loader = {
           loaderType: version?.loaderType,
@@ -291,23 +291,23 @@ const InstanceName = ({
           fileID: manifest.minecraft.modLoaders[0].loader
         };
 
-        dispatch(addToQueue(localInstanceName, loader, manifest));
+        await dispatch(addToQueue(localInstanceName, loader, manifest));
       } else if (version?.loaderType === VANILLA) {
         const loader = {
           loaderType: version?.loaderType,
           mcVersion: manifest.minecraft.version
         };
-        dispatch(addToQueue(localInstanceName, loader, manifest));
+        await dispatch(addToQueue(localInstanceName, loader, manifest));
       }
     } else if (isVanilla) {
-      dispatch(
+      await dispatch(
         addToQueue(localInstanceName, {
           loaderType: version?.loaderType,
           mcVersion: version?.mcVersion
         })
       );
     } else if (isFabric) {
-      dispatch(
+      await dispatch(
         addToQueue(localInstanceName, {
           loaderType: FABRIC,
           mcVersion: version?.mcVersion,
@@ -315,7 +315,7 @@ const InstanceName = ({
         })
       );
     } else if (isForge) {
-      dispatch(
+      await dispatch(
         addToQueue(localInstanceName, {
           loaderType: version?.loaderType,
           mcVersion: version?.mcVersion,

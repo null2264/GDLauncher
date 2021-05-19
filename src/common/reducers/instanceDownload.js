@@ -49,15 +49,21 @@ export default function addToQueue(
   return async (dispatch, getState) => {
     const state = getState();
 
+    // Collect all steps
+
     let loaderLibraries = [];
     let sourceLibraries = [];
 
     switch (loader.loaderType) {
       case FORGE:
-        loaderLibraries = await dispatch(downloadForge());
+        loaderLibraries = await dispatch(
+          downloadForge({ instanceName, loader, manifest })
+        );
         break;
       case FABRIC:
-        loaderLibraries = await dispatch(downloadFabric());
+        loaderLibraries = await dispatch(
+          downloadFabric({ instanceName, loader, manifest })
+        );
         break;
       default:
         break;
@@ -66,13 +72,21 @@ export default function addToQueue(
     let sourceData;
     switch (loader.source) {
       case CURSEFORGE:
-        sourceData = processCurseForgeManifest();
+        sourceData = await dispatch(
+          processCurseForgeManifest({
+            instanceName,
+            loader,
+            manifest
+          })
+        );
         break;
       case FTB:
         break;
       default:
         break;
     }
+
+    sourceLibraries = sourceData.modsToDownload;
 
     await new Promise(resolve => {
       // Force premature unlock to let our listener catch mods from override
@@ -149,12 +163,9 @@ export default function addToQueue(
   };
 }
 
-function processCurseForgeManifest() {
+function processCurseForgeManifest({ instanceName, manifest }) {
   return async (dispatch, getState) => {
     const state = getState();
-    const { manifest } = _getCurrentDownloadItem(state);
-    const instanceName = state.currentDownload;
-    const concurrency = state.settings.concurrentDownloads;
 
     let modManifests = [];
     let modsToDownload = [];
@@ -194,7 +205,7 @@ function processCurseForgeManifest() {
         } while (!ok && tries <= 3);
         /* eslint-enable no-await-in-loop */
       },
-      { concurrency }
+      { concurrency: 10 }
     );
 
     const addonPathZip = path.join(
@@ -235,10 +246,9 @@ function processCurseForgeManifest() {
   };
 }
 
-function downloadFabric() {
+function downloadFabric({ loader }) {
   return async (dispatch, getState) => {
     const state = getState();
-    const { loader } = _getCurrentDownloadItem(state);
     let fabricJson;
     const fabricJsonPath = path.join(
       _getLibrariesPath(state),
@@ -263,11 +273,9 @@ function downloadFabric() {
   };
 }
 
-function downloadForge() {
+function downloadForge({ instanceName, loader }) {
   return async (dispatch, getState) => {
     const state = getState();
-    const { loader } = _getCurrentDownloadItem(state);
-    const instanceName = state.currentDownload;
     const forgeJson = {};
 
     let forgeLibraries = [];

@@ -9,6 +9,7 @@
 /* eslint-disable no-param-reassign */
 
 const CracoAntDesignPlugin = require('craco-antd');
+const path = require('path');
 
 module.exports = () => {
   // const isEnvDevelopment = env === 'development';
@@ -48,7 +49,6 @@ module.exports = () => {
       configure: webpackConfig => {
         webpackConfig.target =
           process.env.APP_TYPE === 'electron' ? 'electron-renderer' : 'web';
-
         // webpackConfig.output = {
         //   filename: isEnvProduction
         //     ? 'static/js/[name].js'
@@ -87,6 +87,9 @@ module.exports = () => {
       {
         plugin: CracoAntDesignPlugin
       }
-    ]
+    ],
+    eslint: {
+      enable: false
+    }
   };
 };

@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import ReactHtmlParser from 'react-html-parser';
 import ReactMarkdown from 'react-markdown';
-import { shell } from 'electron';
 import { faExternalLinkAlt, faInfo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Checkbox, TextField, Cascader, Button, Input, Select } from 'antd';

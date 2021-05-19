@@ -1,90 +1,96 @@
 {
   "env": {
     "browser": true,
-    "es6": true,
-    "node": true
-  },
-  "extends": [
-    "airbnb",
-    "prettier",
-    "plugin:prettier/recommended",
-    "prettier/react"
-  ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "settings": {
-    "import/resolver": {
-      "alias": {
-        "map": [
-          ["^ui$", "./src/ui"],
-          ["app", "./src/app/"],
-          ["common", "./src/common"]
-        ],
-        "extensions": [".js", ".jsx", ".json", ".svg", ".png", ".jpg"]
-      }
-    }
+    "es6": true
   },
   "parser": "babel-eslint",
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb",
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
+  },
   "plugins": [
-    "react",
     "prettier",
-    "compat",
+    "eslint-plugin-testing-library",
     "import",
-    "jsx-a11y",
-    "promise",
-    "react-hooks"
+    "react",
+    "react-hooks",
+    "@shopify"
   ],
   "rules": {
-    "prettier/prettier": "error",
-    "jsx-a11y/aria-role": "off",
-    "no-restricted-syntax": "off",
-    "no-unused-vars": "error",
-    "no-unused-expressions": "error",
-    "consistent-return": "off",
-    "jsx-a11y/no-static-element-interactions": "off",
-    "jsx-a11y/click-events-have-key-events": "off",
-    "no-underscore-dangle": "off",
-    "no-console": "off",
-    "no-use-before-define": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "import/no-unresolved": [2, { "commonjs": true, "amd": true }],
+    "no-bitwise": 0,
+    "no-console": 0,
+    "max-len": 0,
     "no-await-in-loop": "off",
-    "promise/param-names": "error",
-    "promise/always-return": "error",
-    "promise/catch-or-return": "error",
-    "promise/no-native": "off",
-    "react/sort-comp": [
-      "error",
-      {
-        "order": [
-          "type-annotations",
-          "static-methods",
-          "lifecycle",
-          "everything-else",
-          "render"
-        ]
-      }
-    ],
-    "react/jsx-no-bind": "off",
-    "react/jsx-filename-extension": "off",
+    "no-underscore-dangle": 0,
+    "no-use-before-define": ["off"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/no-extraneous-dependencies": "off",
+    "jsx-a11y/alt-text": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "jsx-a11y/no-static-element-interactions": 0,
+    "jsx-a11y/mouse-events-have-key-events": 0,
+    "no-shadow": 0,
+    "no-empty": 0,
+    "arrow-body-style": 0,
+    "arrow-parens": 0,
+    "object-curly-newline": 0,
+    "function-paren-newline": 0,
+    "react/jsx-wrap-multilines": 0,
+    "react/no-array-index-key": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/prop-types": "off",
-    "react/forbid-dom-props": [2, { "forbid": ["style"] }],
-    "import/no-anonymous-default-export": [
-      "error",
-      {
-        "allowArray": false,
-        "allowArrowFunction": false,
-        "allowAnonymousClass": false,
-        "allowAnonymousFunction": false,
-        "allowCallExpression": true,
-        "allowLiteral": false,
-        "allowObject": true
-      }
-    ],
-    "react/jsx-pascal-case": [2, { "allowAllCaps": false }],
-    "react/prefer-stateless-function": "off",
-    "import/no-unresolved": "off",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-    "jsx-a11y/anchor-is-valid": "off"
-  }
+    "import/named": "error",
+    "import/default": "error",
+    "import/no-dynamic-require": "error",
+    "import/no-self-import": "error",
+    "import/no-cycle": "error",
+    "import/no-useless-path-segments": "error",
+    "import/export": "warn",
+    "import/first": "error",
+    "import/exports-last": "error",
+    "import/no-duplicates": "error",
+    "import/extensions": "off"
+    // "import/order": [
+    //   "error",
+    //   {
+    //     "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+    //     "newlines-between": "never"
+    //   }
+    // ]
+    // "@shopify/jsx-no-hardcoded-content": [
+    //   "error",
+    //   {
+    //     "allowStrings": false,
+    //     "allowNumbers": true
+    //   }
+    // ]
+  },
+  "overrides": [
+    {
+      // 3) Now we enable eslint-plugin-testing-library rules or preset only for matching files!
+      "files": [
+        "**/__tests__/**/*.[jt]s?(x)",
+        "**/?(*.)+(spec|test).[jt]s?(x)"
+      ],
+      "extends": ["plugin:testing-library/react"]
+    }
+  ]
 }

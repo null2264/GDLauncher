@@ -1,3 +1,7 @@
+const { URL } = require('url');
+const { createHash } = require('crypto');
+const { promisify } = require('util');
+const fss = require('fs');
 const {
   app,
   BrowserWindow,
@@ -14,13 +18,9 @@ const path = require('path');
 const { spawn, exec } = require('child_process');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
-const fss = require('fs');
-const { promisify } = require('util');
-const { createHash } = require('crypto');
 const {
   default: { fromBase64: toBase64URL }
 } = require('base64url');
-const { URL } = require('url');
 const murmur = require('./native/murmur2.js');
 const nsfw = require('./native/nsfw.js');
 

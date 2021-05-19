@@ -17,7 +17,7 @@ import {
   faListOl,
   faList
 } from '@fortawesome/free-solid-svg-icons';
-import { updateInstanceConfig } from '../../reducers/actions';
+import updateInstanceConfig from '../../reducers/updateInstanceConfig';
 import { _getInstancesPath, _getInstance } from '../../utils/selectors';
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
@@ -49,7 +49,7 @@ const Notes = ({ instanceName }) => {
           value={value}
           onChange={notes => {
             setValue(notes);
-            updateNotes.callback(notes);
+            updateNotes(notes);
           }}
         >
           <Toolbar>

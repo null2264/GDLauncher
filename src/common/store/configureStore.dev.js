@@ -9,7 +9,6 @@ import middlewareInstances from '../../app/desktop/utils/middlewareInstances';
 import middlewareApp from '../../app/desktop/utils/middlewareApp';
 import createRootReducer from '../reducers';
 import persistConfig from './persistConfig';
-import { UPDATE_DOWNLOAD_PROGRESS } from '../reducers/actionTypes';
 
 const history = createHashHistory();
 const rootReducer = createRootReducer(history);
@@ -23,7 +22,7 @@ const configureStore = () => {
 
   const logger = createLogger({
     // We need to hide the UPDATE_PROGRESS dispatches, since they are just too many and they slow down the execution
-    predicate: (getState, action) => action.type !== UPDATE_DOWNLOAD_PROGRESS,
+    // predicate: (getState, action) => action.type !== UPDATE_DOWNLOAD_PROGRESS,
     collapsed: true,
     duration: true,
     colors: {

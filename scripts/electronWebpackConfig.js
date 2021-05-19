@@ -63,9 +63,7 @@ const baseConfig = {
     }),
     new CopyWebpackPlugin({
       patterns: [{ from: './public/native', to: './build/native' }]
-    }),
-
-    new webpack.NamedModulesPlugin()
+    })
   ]
 };
 
@@ -86,9 +84,7 @@ module.exports = merge(baseConfig, {
   optimization: {
     minimizer: [
       new TerserPlugin({
-        parallel: true,
-        sourceMap: true,
-        cache: true
+        parallel: true
       })
     ]
   },

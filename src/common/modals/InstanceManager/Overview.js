@@ -24,7 +24,7 @@ import {
   DEFAULT_JAVA_ARGS,
   resolutionPresets
 } from '../../../app/desktop/utils/constants';
-import { updateInstanceConfig } from '../../reducers/actions';
+import updateInstanceConfig from '../../reducers/updateInstanceConfig';
 import { openModal } from '../../reducers/modals/actions';
 import { convertMinutesToHumanTime } from '../../utils';
 import { CURSEFORGE } from '../../utils/constants';
@@ -524,7 +524,7 @@ const Overview = ({ instanceName, background, manifest }) => {
                 value={javaLocalArguments}
                 onChange={e => {
                   setJavaLocalArguments(e.target.value);
-                  debouncedArgumentsUpdate.callback(e.target.value);
+                  debouncedArgumentsUpdate(e.target.value);
                 }}
               />
               <JavaResetButton onClick={resetJavaArguments}>
@@ -556,7 +556,7 @@ const Overview = ({ instanceName, background, manifest }) => {
                 value={customJavaPath}
                 onChange={e => {
                   setCustomJavaPath(e.target.value);
-                  debouncedJavaPathUpdate.callback(e.target.value);
+                  debouncedJavaPathUpdate(e.target.value);
                 }}
               />
 

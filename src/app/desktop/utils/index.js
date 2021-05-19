@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+// eslint-disable-next-line
 import originalFs from 'original-fs';
 import fse from 'fs-extra';
 import { extractFull } from 'node-7z';

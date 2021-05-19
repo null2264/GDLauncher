@@ -7,11 +7,11 @@ import { faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons';
 import path from 'path';
 import { isEqual } from 'lodash';
 import Modal from '../components/Modal';
-import { addToQueue } from '../reducers/actions';
 import { _getInstance } from '../utils/selectors';
 import { closeAllModals } from '../reducers/modals/actions';
 import { FABRIC, VANILLA, FORGE, CURSEFORGE, FTB } from '../utils/constants';
 import { getFilteredVersions } from '../../app/desktop/utils';
+import addToQueue from '../reducers/instanceDownload';
 
 const McVersionChanger = ({ instanceName, defaultValue }) => {
   const vanillaManifest = useSelector(state => state.app.vanillaManifest);

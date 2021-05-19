@@ -9,7 +9,6 @@ import gte from 'semver/functions/gte';
 import lt from 'semver/functions/lt';
 import lte from 'semver/functions/lte';
 import gt from 'semver/functions/gt';
-import log from 'electron-log';
 import omitBy from 'lodash/omitBy';
 import { pipeline } from 'stream';
 import zlib from 'zlib';
@@ -20,6 +19,7 @@ import { push } from 'connected-react-router';
 import { spawn } from 'child_process';
 import symlink from 'symlink-dir';
 import { promises as fs } from 'fs';
+// eslint-disable-next-line
 import originalFs from 'original-fs';
 import pMap from 'p-map';
 import makeDir from 'make-dir';
@@ -114,6 +114,8 @@ import PromiseQueue from '../../app/desktop/utils/PromiseQueue';
 import fmlLibsMapping from '../../app/desktop/utils/fmllibs';
 import { openModal } from './modals/actions';
 import forgePatcher from '../utils/forgePatcher';
+import addToQueue from './instanceDownload';
+import updateInstanceConfig from './updateInstanceConfig';
 
 export function initManifests() {
   return async (dispatch, getState) => {
@@ -323,13 +325,13 @@ export function updateUpdateAvailable(updateAvailable) {
 
 export function updateDownloadProgress(percentage) {
   return (dispatch, getState) => {
-    const { currentDownload } = getState();
-    dispatch({
-      type: ActionTypes.UPDATE_DOWNLOAD_PROGRESS,
-      instanceName: currentDownload,
-      percentage: Number(percentage).toFixed(0)
-    });
-    ipcRenderer.invoke('update-progress-bar', percentage);
+    // const { currentDownload } = getState();
+    // dispatch({
+    //   type: ActionTypes.UPDATE_DOWNLOAD_PROGRESS,
+    //   instanceName: currentDownload,
+    //   percentage: Number(percentage).toFixed(0)
+    // });
+    // ipcRenderer.invoke('update-progress-bar', percentage);
   };
 }
 
@@ -915,12 +917,12 @@ export function removeDownloadFromQueue(instanceName) {
 
 export function updateDownloadStatus(instanceName, status) {
   return dispatch => {
-    dispatch({
-      type: ActionTypes.UPDATE_DOWNLOAD_STATUS,
-      status,
-      instanceName
-    });
-    dispatch(updateDownloadProgress(0));
+    // dispatch({
+    //   type: ActionTypes.UPDATE_DOWNLOAD_STATUS,
+    //   status,
+    //   instanceName
+    // });
+    // dispatch(updateDownloadProgress(0));
   };
 }
 
@@ -935,130 +937,11 @@ export function updateLastUpdateVersion(version) {
 
 export function updateDownloadCurrentPhase(instanceName, status) {
   return dispatch => {
-    dispatch({
-      type: ActionTypes.UPDATE_DOWNLOAD_STATUS,
-      status,
-      instanceName
-    });
-  };
-}
-
-export function updateInstanceConfig(
-  instanceName,
-  updateFunction,
-  forceWrite = false
-) {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const instance = _getInstance(state)(instanceName) || {};
-    const update = async () => {
-      const configPath = path.join(
-        _getInstancesPath(state),
-        instanceName,
-        'config.json'
-      );
-      const tempConfigPath = path.join(
-        _getInstancesPath(state),
-        instanceName,
-        'config_new_temp.json'
-      );
-      // Remove queue and name, they are augmented in the reducer and we don't want them in the config file
-      const newConfig = updateFunction(omit(instance, ['queue', 'name']));
-      // Ensure that the new config is actually valid to write
-      try {
-        const JsonString = JSON.stringify(newConfig);
-        const isJson = JSON.parse(JsonString);
-        if (!isJson || typeof isJson !== 'object') {
-          const err = `Cannot write this JSON to ${instanceName}. Not an object`;
-          log.error(err);
-          throw new Error(err);
-        }
-      } catch {
-        const err = `Cannot write this JSON to ${instanceName}. Not parsable`;
-        log.error(err, newConfig);
-        throw new Error(err);
-      }
-
-      try {
-        await fs.lstat(configPath);
-
-        await fse.outputJson(tempConfigPath, newConfig);
-        await fse.rename(tempConfigPath, configPath);
-      } catch {
-        if (forceWrite) {
-          await fse.outputJson(tempConfigPath, newConfig);
-          await fse.rename(tempConfigPath, configPath);
-        }
-      }
-      dispatch({
-        type: ActionTypes.UPDATE_INSTANCES,
-        instances: {
-          ...state.instances.list,
-          [instanceName]: updateFunction(instance)
-        }
-      });
-    };
-
-    if (instance?.queue) {
-      // Add it to the instance promise queue
-      await instance.queue.add(update);
-    } else {
-      await update();
-    }
-  };
-}
-
-export function addToQueue(
-  instanceName,
-  loader,
-  manifest,
-  background,
-  timePlayed,
-  settings = {}
-) {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { currentDownload } = state;
-    const patchedSettings =
-      typeof settings === 'object' && settings !== null ? settings : {};
-
-    dispatch({
-      type: ActionTypes.ADD_DOWNLOAD_TO_QUEUE,
-      instanceName,
-      loader,
-      manifest,
-      background,
-      ...patchedSettings
-    });
-
-    await makeDir(path.join(_getInstancesPath(state), instanceName));
-    lockfile.lock(
-      path.join(_getInstancesPath(state), instanceName, 'installing.lock'),
-      err => {
-        if (err) console.error(err);
-      }
-    );
-
-    dispatch(
-      updateInstanceConfig(
-        instanceName,
-        prev => {
-          return {
-            ...(prev || {}),
-            loader,
-            timePlayed: prev.timePlayed || timePlayed || 0,
-            background,
-            mods: prev.mods || [],
-            ...patchedSettings
-          };
-        },
-        true
-      )
-    );
-    if (!currentDownload) {
-      dispatch(updateCurrentDownload(instanceName));
-      dispatch(downloadInstance(instanceName));
-    }
+    // dispatch({
+    //   type: ActionTypes.UPDATE_DOWNLOAD_STATUS,
+    //   status,
+    //   instanceName
+    // });
   };
 }
 
@@ -1070,52 +953,6 @@ export function addNextInstanceToCurrentDownload() {
       dispatch(updateCurrentDownload(queueArr[0]));
       dispatch(downloadInstance(queueArr[0]));
     }
-  };
-}
-
-export function downloadFabric(instanceName) {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { loader } = _getCurrentDownloadItem(state);
-
-    dispatch(updateDownloadStatus(instanceName, 'Downloading fabric files...'));
-
-    let fabricJson;
-    const fabricJsonPath = path.join(
-      _getLibrariesPath(state),
-      'net',
-      'fabricmc',
-      loader?.mcVersion,
-      loader?.loaderVersion,
-      'fabric.json'
-    );
-    try {
-      fabricJson = await fse.readJson(fabricJsonPath);
-    } catch (err) {
-      fabricJson = (await getFabricJson(loader)).data;
-      await fse.outputJson(fabricJsonPath, fabricJson);
-    }
-
-    const libraries = librariesMapper(
-      fabricJson.libraries,
-      _getLibrariesPath(state)
-    );
-
-    let prev = 0;
-    const updatePercentage = downloaded => {
-      const percentage = (downloaded * 100) / libraries.length;
-      const progress = parseInt(percentage, 10);
-      if (progress !== prev) {
-        prev = progress;
-        dispatch(updateDownloadProgress(progress));
-      }
-    };
-
-    await downloadInstanceFiles(
-      libraries,
-      updatePercentage,
-      state.settings.concurrentDownloads
-    );
   };
 }
 
@@ -2462,9 +2299,8 @@ export function launchInstance(instanceName) {
     const librariesPath = _getLibrariesPath(state);
     const assetsPath = _getAssetsPath(state);
     const { memory, args } = state.settings.java;
-    const {
-      resolution: globalMinecraftResolution
-    } = state.settings.minecraftSettings;
+    const { resolution: globalMinecraftResolution } =
+      state.settings.minecraftSettings;
     const {
       loader,
       javaArgs,

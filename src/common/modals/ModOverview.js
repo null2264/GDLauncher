@@ -17,7 +17,7 @@ import {
 } from '../api';
 import CloseButton from '../components/CloseButton';
 import { closeModal, openModal } from '../reducers/modals/actions';
-import { installMod, updateInstanceConfig } from '../reducers/actions';
+import { installMod } from '../reducers/actions';
 import { remove } from 'fs-extra';
 import { _getInstancesPath, _getInstance } from '../utils/selectors';
 import { FABRIC, FORGE, CURSEFORGE_URL } from '../utils/constants';
@@ -27,6 +27,7 @@ import {
   filterForgeFilesByVersion,
   getPatchedInstanceType
 } from '../../app/desktop/utils';
+import updateInstanceConfig from '../reducers/updateInstanceConfig';
 
 const ModOverview = ({
   projectID,

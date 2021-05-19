@@ -19,10 +19,10 @@ export const FMLLIBS_OUR_BASE_URL = 'https://fmllibs.gdevs.io';
 export const FMLLIBS_FORGE_BASE_URL =
   'https://files.minecraftforge.net/fmllibs';
 export const IMGUR_CLIENT_ID = '509a564cf4466c9';
+
 export const FABRIC = 'fabric';
 export const FORGE = 'forge';
 export const VANILLA = 'vanilla';
-
 export const CURSEFORGE = 'curseforge';
 export const FTB = 'ftb';
 
@@ -36,3 +36,13 @@ export const MICROSOFT_OAUTH_CLIENT_ID = 'b9336bf8-c6bb-4344-aabe-63d0bfa8db2e';
 export const MICROSOFT_OAUTH_REDIRECT_URL =
   'https://login.microsoftonline.com/common/oauth2/nativeclient';
 export const MINECRAFT_SERVICES_URL = 'https://api.minecraftservices.com';
+
+export const DOWNLOAD_STEPS = {
+  GET_FORGE: 'GET_FORGE',
+  GET_FABRIC: 'GET_FABRIC',
+  GET_MC: 'GET_MC',
+  GET_CURSEFORGE_ADDON: 'GET_CURSEFORGE_ADDON',
+  GET_FTB_ADDON: 'GET_FTB_ADDON',
+  DOWNLOAD_FILES: 'DOWNLOAD_FILES',
+  PATCH_FORGE: 'PATCH_FORGE'
+};

@@ -13,7 +13,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Input } from 'antd';
 import { transparentize } from 'polished';
-import { addToQueue } from '../../reducers/actions';
 import { closeModal, openModal } from '../../reducers/modals/actions';
 import {
   downloadAddonZip,
@@ -25,6 +24,7 @@ import bgImage from '../../assets/mcCube.jpg';
 import { downloadFile } from '../../../app/desktop/utils/downloader';
 import { FABRIC, VANILLA, FORGE, FTB, CURSEFORGE } from '../../utils/constants';
 import { getFTBModpackVersionData } from '../../api';
+import addToQueue from '../../reducers/instanceDownload';
 
 const InstanceName = ({
   in: inProp,

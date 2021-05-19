@@ -21,10 +21,10 @@ import Modpack from './Modpack';
 import {
   initLatestMods,
   clearLatestModManifests,
-  updateInstanceConfig
 } from '../../reducers/actions';
 import instanceDefaultBackground from '../../../common/assets/instance_default.png';
 import omit from 'lodash/omit';
+import updateInstanceConfig from '../../reducers/updateInstanceConfig';
 
 const SideMenu = styled.div`
   display: flex;

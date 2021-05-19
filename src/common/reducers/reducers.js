@@ -35,31 +35,21 @@ function downloadQueue(state = {}, action) {
       return {
         ...state,
         [action.instanceName]: {
-          percentage: 0,
           loader: action.loader,
-          status: null,
-          currentPhase: 1,
-          totalPhases: action.phases,
           manifest: action.manifest,
+          filesToDownload: [],
+          steps: [],
           ...action.settings
         }
       };
     case ActionTypes.REMOVE_DOWNLOAD_FROM_QUEUE:
       return omit(state, action.instanceName);
-    case ActionTypes.UPDATE_DOWNLOAD_PROGRESS:
+    case ActionTypes.DOWNLOAD_NEXT_STEP:
       return {
         ...state,
         [action.instanceName]: {
           ...state[action.instanceName],
-          percentage: action.percentage
-        }
-      };
-    case ActionTypes.UPDATE_DOWNLOAD_STATUS:
-      return {
-        ...state,
-        [action.instanceName]: {
-          ...state[action.instanceName],
-          status: action.status
+          steps: state[action.instanceName].steps.slice(1)
         }
       };
     default:

@@ -25,12 +25,9 @@ import fse from 'fs-extra';
 import makeDir from 'make-dir';
 import curseForgeIcon from '../../assets/curseforgeIcon.webp';
 import { _getInstance, _getInstancesPath } from '../../utils/selectors';
-import {
-  updateInstanceConfig,
-  deleteMod,
-  updateMod
-} from '../../reducers/actions';
+import { deleteMod, updateMod } from '../../reducers/actions';
 import { openModal } from '../../reducers/modals/actions';
+import updateInstanceConfig from '../../reducers/updateInstanceConfig';
 
 const Header = styled.div`
   height: 40px;

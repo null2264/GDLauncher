@@ -84,17 +84,28 @@ const Sidebar = styled.div`
 `;
 
 const SidebarInnerTopContainer = styled.div`
-  height: 100%;
+  height: 70%;
   display: flex;
   justify-content: center;
   padding-top: 10px;
 `;
 
 const SidebarInnerBottomContainer = styled.div`
-  height: 100%;
+  height: 130%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding-top: 10px;
+`;
+
+const NotificationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 5px;
+  height: 100%;
+  width: 100%;
 `;
 
 const Spinner = keyframes`
@@ -111,10 +122,10 @@ const Notification = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 0;
+  margin-top: 10px;
   border-radius: 5px;
-  height: 45px;
-  width: 100%;
+  height: 38px;
+  width: 38px;
   padding: 2px;
   overflow: hidden;
 
@@ -124,31 +135,23 @@ const Notification = styled(motion.div)`
     height: 200%;
     border-radius: 50%;
     content: '';
-    background: linear-gradient(
-      90deg,
-      rgba(39, 174, 96, 1) 0%,
-      rgba(18, 83, 46, 1) 100%
-    );
+    background: ${({ initialized }) =>
+      initialized
+        ? `linear-gradient(90deg, rgba(39, 174, 96, 1) 0%, rgba(18, 83, 46, 1) 100%)`
+        : `linear-gradient(90deg, rgba(250,184,73,1) 0%, rgba(164,119,43,1) 100%)`};
+
     animation: 1.5s linear infinite ${Spinner};
   }
 `;
 
 const NotificationContent = styled.div`
   background: ${props => props.theme.palette.grey[800]};
-  height: 100%;
-  width: calc(100% - 4px);
+  height: calc(100% - 2px);
+  width: calc(100% - 2px);
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-const NotificationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  height: 400px;
 `;
 
 function DesktopRoot({ store }) {
@@ -293,61 +296,62 @@ function DesktopRoot({ store }) {
             <hr />
             <SidebarInnerBottomContainer>
               <FontAwesomeIcon icon={faGamepad} />
+              <NotificationContainer>
+                {Object.entries(startedInstances).map(([key, value]) => (
+                  <>
+                    <Notification
+                      key={key}
+                      initialized={value.initialized}
+                      ref={notificationRef}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      transition={{
+                        type: 'spring',
+                        duration: 0.3,
+                        damping: 17,
+                        stiffness: 300,
+                        delay: 0.13
+                      }}
+                    >
+                      <NotificationContent />
+                    </Notification>
+                    <motion.div
+                      style={{
+                        position: 'absolute',
+                        top: value.position.y,
+                        left: value.position.x,
+                        background: theme.palette.grey[900],
+                        border: `2px solid ${theme.palette.colors.green}`,
+                        height: '100px',
+                        width: '100px',
+                        borderRadius: '10px'
+                      }}
+                      initial={{
+                        x: 0,
+                        y: 0,
+                        opacity: 1
+                      }}
+                      animate={{
+                        x: window.innerWidth - value.position.x - 150,
+                        y:
+                          window.innerHeight -
+                          value.position.y -
+                          140 -
+                          50 * (Object.values(startedInstances).length - 1),
+                        scaleX: 1.8,
+                        scaleY: 0.5,
+                        opacity: [null, null, 0]
+                      }}
+                      transition={{
+                        type: 'spring',
+                        duration: 0.8
+                      }}
+                    />
+                  </>
+                ))}
+              </NotificationContainer>
             </SidebarInnerBottomContainer>
-            <NotificationContainer>
-              {Object.entries(startedInstances).map(([key, value]) => (
-                <>
-                  <Notification
-                    key={key}
-                    ref={notificationRef}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    transition={{
-                      type: 'spring',
-                      duration: 0.3,
-                      damping: 17,
-                      stiffness: 300,
-                      delay: 0.13
-                    }}
-                  >
-                    <NotificationContent />
-                  </Notification>
-                  <motion.div
-                    style={{
-                      position: 'absolute',
-                      top: value.position.y,
-                      left: value.position.x,
-                      background: theme.palette.grey[900],
-                      border: `2px solid ${theme.palette.colors.green}`,
-                      height: '100px',
-                      width: '100px',
-                      borderRadius: '10px'
-                    }}
-                    initial={{
-                      x: 0,
-                      y: 0,
-                      opacity: 1
-                    }}
-                    animate={{
-                      x: window.innerWidth - value.position.x - 150,
-                      y:
-                        window.innerHeight -
-                        value.position.y -
-                        140 -
-                        50 * (Object.values(startedInstances).length - 1),
-                      scaleX: 1.8,
-                      scaleY: 0.5,
-                      opacity: [null, null, 0]
-                    }}
-                    transition={{
-                      type: 'spring',
-                      duration: 0.8
-                    }}
-                  />
-                </>
-              ))}
-            </NotificationContainer>
           </Sidebar>
         </Container>
       </AnimateSharedLayout>

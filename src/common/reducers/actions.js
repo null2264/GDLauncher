@@ -2289,7 +2289,7 @@ export const startListener = () => {
   };
 };
 
-export function launchInstance(instanceName) {
+export function launchInstance(instanceName, { position }) {
   return async (dispatch, getState) => {
     const state = getState();
     const defaultJavaPath = _getJavaPath(state);
@@ -2487,7 +2487,8 @@ export function launchInstance(instanceName) {
         lastPlayed: Date.now()
       }))
     );
-    dispatch(addStartedInstance({ instanceName, pid: ps.pid }));
+
+    dispatch(addStartedInstance({ instanceName, pid: ps.pid, position }));
 
     ps.stdout.on('data', data => {
       console.log(data.toString());

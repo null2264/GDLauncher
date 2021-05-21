@@ -101,7 +101,8 @@ function startedInstances(state = {}, action) {
         ...state,
         [action.instance.instanceName]: {
           pid: action.instance.pid,
-          initialized: false
+          initialized: false,
+          position: action.instance.position
         }
       };
     case ActionTypes.UPDATE_STARTED_INSTANCE:

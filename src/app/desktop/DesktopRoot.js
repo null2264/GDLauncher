@@ -1,11 +1,12 @@
-import React, { useEffect, memo, useState } from 'react';
+import React, { useEffect, memo, useState, useRef } from 'react';
 import { useDidMount } from 'rooks';
-import styled from 'styled-components';
+import styled, { keyframes, useTheme } from 'styled-components';
 import { Switch } from 'react-router';
 import { ipcRenderer } from 'electron';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 import { message, notification } from 'antd';
+import { motion, AnimateSharedLayout } from 'framer-motion';
 import RouteWithSubRoutes from '../../common/components/RouteWithSubRoutes';
 import {
   loginWithAccessToken,
@@ -27,13 +28,18 @@ import GlobalStyles from '../../common/GlobalStyles';
 import RouteBackground from '../../common/components/RouteBackground';
 import ga from '../../common/utils/analytics';
 import routes from './utils/routes';
-import { _getCurrentAccount } from '../../common/utils/selectors';
+import {
+  _getCurrentAccount,
+  _getInstance,
+  _getInstances
+} from '../../common/utils/selectors';
 import { isLatestJavaDownloaded } from './utils';
 import SystemNavbar from './components/SystemNavbar';
 import useTrackIdle from './utils/useTrackIdle';
 import { openModal } from '../../common/reducers/modals/actions';
 import Message from './components/Message';
 import { ACCOUNT_MICROSOFT } from '../../common/utils/constants';
+import { position } from 'polished';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -41,7 +47,7 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
-  position: absolute;
+  /* position: absolute; */
   top: ${props => props.theme.sizes.height.systemNavbar}px;
   height: calc(100vh - ${props => props.theme.sizes.height.systemNavbar}px);
   flex: 1 0;
@@ -65,23 +71,54 @@ const InnerContainer = styled.div`
 const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   min-width: 200px;
   background: ${props => props.theme.palette.grey[900]};
-  justify-content: flex-end;
+`;
+const Spinner = keyframes`
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+`;
+
+const Notification = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  /* background: ${props => props.theme.palette.grey[800]}; */
+  /* border: 2px solid ${props => props.theme.palette.colors.green}; */
+  border-radius: 5px;
+  height: 50px;
+  width: 100%;
+  /* position: relative; */
+  /* overflow: hidden; */
+  background: linear-gradient(
+    90deg,
+    rgba(39, 174, 96, 1) 0%,
+    rgba(18, 83, 46, 1) 100%
+  );
+  &&::before {
+    animation: 1.5s linear infinite ${Spinner};
+  }
+`;
+
+const NotificationContent = styled.div`
+  background: ${props => props.theme.palette.grey[800]};
+  height: 46px;
+  width: calc(100% - 4px);
 `;
 
 const NotificationContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
   height: 400px;
   padding: 10px;
-  div {
-    background: ${props => props.theme.palette.grey[800]};
-    border: 2px solid ${props => props.theme.palette.colors.green};
-    border-radius: 5px;
-    height: 50px;
-    width: 100%;
-  }
 `;
 
 function DesktopRoot({ store }) {
@@ -90,9 +127,12 @@ function DesktopRoot({ store }) {
   const clientToken = useSelector(state => state.app.clientToken);
   const javaPath = useSelector(state => state.settings.java.path);
   const location = useSelector(state => state.router.location);
+  const startedInstances = useSelector(state => state.startedInstances);
   const modals = useSelector(state => state.modals);
   const shouldShowDiscordRPC = useSelector(state => state.settings.discordRPC);
   const [contentStyle, setContentStyle] = useState({ transform: 'scale(1)' });
+  const notificationRef = useRef();
+  const theme = useTheme();
 
   message.config({
     top: 45,
@@ -205,24 +245,79 @@ function DesktopRoot({ store }) {
     <Wrapper>
       <SystemNavbar />
       <Message />
-      <Container style={contentStyle}>
-        <InnerContainer>
-          <GlobalStyles />
-          <RouteBackground />
-          <Switch>
-            {routes.map((route, i) => (
-              <RouteWithSubRoutes key={i} {...route} /> // eslint-disable-line
-            ))}
-          </Switch>
-        </InnerContainer>
-        <Sidebar>
-          <div></div>
-          <hr />
-          <NotificationContainer>
+      <AnimateSharedLayout>
+        <Container style={contentStyle}>
+          <InnerContainer>
+            <GlobalStyles />
+            <RouteBackground />
+            <Switch>
+              {routes.map((route, i) => (
+                <RouteWithSubRoutes key={i} {...route} /> // eslint-disable-line
+              ))}
+            </Switch>
+          </InnerContainer>
+          <Sidebar>
             <div></div>
-          </NotificationContainer>
-        </Sidebar>
-      </Container>
+            <hr />
+            <NotificationContainer>
+              {Object.entries(startedInstances).map(([key, value]) => (
+                <>
+                  <Notification
+                    key={key}
+                    ref={notificationRef}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{
+                      type: 'spring',
+                      duration: 0.3,
+                      damping: 17,
+                      stiffness: 300,
+                      delay: 0.25
+                    }}
+                  >
+                    <NotificationContent>{key}</NotificationContent>
+                  </Notification>
+                  <motion.div
+                    style={{
+                      position: 'absolute',
+                      top: value.position.y,
+                      left: value.position.x,
+                      background: theme.palette.grey[900],
+                      border: `2px solid ${theme.palette.colors.green}`,
+                      height: '100px',
+                      width: '100px',
+                      borderRadius: '10px'
+                    }}
+                    initial={{
+                      x: 0,
+                      y: 0,
+                      opacity: 1
+                    }}
+                    animate={{
+                      x: window.innerWidth - value.position.x - 150,
+                      y:
+                        window.innerHeight -
+                        value.position.y -
+                        140 -
+                        50 * (Object.values(startedInstances).length - 1),
+                      scaleX: 1.8,
+                      scaleY: 0.5,
+                      opacity: [null, null, 0]
+                    }}
+                    transition={{
+                      type: 'spring',
+                      damping: 30,
+                      mass: 3,
+                      stiffness: 200
+                    }}
+                  />
+                </>
+              ))}
+            </NotificationContainer>
+          </Sidebar>
+        </Container>
+      </AnimateSharedLayout>
     </Wrapper>
   );
 }

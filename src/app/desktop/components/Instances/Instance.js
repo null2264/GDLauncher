@@ -1,8 +1,9 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { transparentize } from 'polished';
 import styled, { keyframes } from 'styled-components';
 import { promises as fs } from 'fs';
 import { notification } from 'antd';
+import { motion } from 'framer-motion';
 import { LoadingOutlined } from '@ant-design/icons';
 import path from 'path';
 import { ipcRenderer } from 'electron';
@@ -42,9 +43,9 @@ const Container = styled.div`
   margin-right: 20px;
   margin-top: 20px;
   transition: transform 150ms ease-in-out;
-  &:hover {
+  /* &:hover {
     ${p => (p.installing ? '' : 'transform: scale3d(1.1, 1.1, 1.1);')}
-  }
+  } */
 `;
 
 const Spinner = keyframes`
@@ -67,7 +68,7 @@ const PlayButtonAnimation = keyframes`
   }
 `;
 
-const InstanceContainer = styled.div`
+const InstanceContainer = styled(motion.div)`
   display: flex;
   position: absolute;
   justify-content: center;
@@ -107,9 +108,9 @@ const HoverContainer = styled.div`
   backdrop-filter: blur(4px);
   will-change: opacity;
   background: ${p => transparentize(0.5, p.theme.palette.grey[800])};
-  &:hover {
+  /* &:hover {
     opacity: 1;
-  }
+  } */
 
   .spinner:before {
     animation: 1.5s linear infinite ${Spinner};
@@ -165,6 +166,7 @@ const Instance = ({ instanceName }) => {
   const startedInstances = useSelector(state => state.startedInstances);
   const instancesPath = useSelector(_getInstancesPath);
   const isInQueue = downloadQueue[instanceName];
+  const instanceRef = useRef();
 
   const isPlaying = startedInstances[instanceName];
 
@@ -181,13 +183,18 @@ const Instance = ({ instanceName }) => {
   }, [instance.background, instancesPath, instanceName]);
 
   const startInstance = () => {
-    notification.open({
-      message: 'Notification Title',
-      closeIcon: null
-    });
+    if (instanceRef.current) {
+      // notification.open({
+      //   message: 'Notification Title',
+      //   closeIcon: null
+      // });
 
-    if (isInQueue || isPlaying) return;
-    dispatch(launchInstance(instanceName));
+      if (isInQueue || isPlaying) return;
+
+      const position = instanceRef.current.getBoundingClientRect();
+
+      dispatch(launchInstance(instanceName, { position }));
+    }
   };
   const openFolder = () => {
     ipcRenderer.invoke('openFolder', path.join(instancesPath, instance.name));
@@ -218,11 +225,17 @@ const Instance = ({ instanceName }) => {
     <>
       <ContextMenuTrigger id={instanceName}>
         <Container
+          ref={instanceRef}
           installing={isInQueue}
           onClick={startInstance}
           isHovered={isHovered || isPlaying}
         >
-          <InstanceContainer installing={isInQueue} background={background}>
+          <InstanceContainer
+            whileTap={{ scale: 0.9 }}
+            installing={isInQueue}
+            background={background}
+            transition={{ duration: 0.3 }}
+          >
             <TimePlayed>
               <FontAwesomeIcon
                 icon={faClock}
@@ -236,10 +249,7 @@ const Instance = ({ instanceName }) => {
             <MCVersion>{instance.loader?.mcVersion}</MCVersion>
             {instanceName}
           </InstanceContainer>
-          <HoverContainer
-            installing={isInQueue}
-            isHovered={isHovered || isPlaying}
-          >
+          <div installing={isInQueue} isHovered={isHovered || isPlaying}>
             {currentDownload === instanceName ? (
               <>
                 <div
@@ -289,7 +299,7 @@ const Instance = ({ instanceName }) => {
                 {!isInQueue && !isPlaying && 'PLAY'}
               </>
             )}
-          </HoverContainer>
+          </div>
         </Container>
       </ContextMenuTrigger>
       <Portal>

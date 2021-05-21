@@ -40,6 +40,12 @@ import { openModal } from '../../common/reducers/modals/actions';
 import Message from './components/Message';
 import { ACCOUNT_MICROSOFT } from '../../common/utils/constants';
 import { position } from 'polished';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faGamepad,
+  faServer,
+  faWindowClose
+} from '@fortawesome/free-solid-svg-icons';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -72,44 +78,69 @@ const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-width: 200px;
+  max-width: 45px;
+  min-width: 45px;
   background: ${props => props.theme.palette.grey[900]};
 `;
+
+const SidebarInnerTopContainer = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+`;
+
+const SidebarInnerBottomContainer = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+`;
+
 const Spinner = keyframes`
   0% {
-    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+    transform: rotate(0deg);
   }
   100% {
-    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+    transform: rotate(360deg);
   }
 `;
 
 const Notification = styled(motion.div)`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
-  /* background: ${props => props.theme.palette.grey[800]}; */
-  /* border: 2px solid ${props => props.theme.palette.colors.green}; */
+  margin: 10px 0;
   border-radius: 5px;
-  height: 50px;
+  height: 45px;
   width: 100%;
-  /* position: relative; */
-  /* overflow: hidden; */
-  background: linear-gradient(
-    90deg,
-    rgba(39, 174, 96, 1) 0%,
-    rgba(18, 83, 46, 1) 100%
-  );
-  &&::before {
+  padding: 2px;
+  overflow: hidden;
+
+  &::before {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    border-radius: 50%;
+    content: '';
+    background: linear-gradient(
+      90deg,
+      rgba(39, 174, 96, 1) 0%,
+      rgba(18, 83, 46, 1) 100%
+    );
     animation: 1.5s linear infinite ${Spinner};
   }
 `;
 
 const NotificationContent = styled.div`
   background: ${props => props.theme.palette.grey[800]};
-  height: 46px;
+  height: 100%;
   width: calc(100% - 4px);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const NotificationContainer = styled.div`
@@ -118,7 +149,6 @@ const NotificationContainer = styled.div`
   justify-content: flex-end;
   align-items: center;
   height: 400px;
-  padding: 10px;
 `;
 
 function DesktopRoot({ store }) {
@@ -257,8 +287,13 @@ function DesktopRoot({ store }) {
             </Switch>
           </InnerContainer>
           <Sidebar>
-            <div></div>
+            <SidebarInnerTopContainer>
+              <FontAwesomeIcon icon={faServer} />
+            </SidebarInnerTopContainer>
             <hr />
+            <SidebarInnerBottomContainer>
+              <FontAwesomeIcon icon={faGamepad} />
+            </SidebarInnerBottomContainer>
             <NotificationContainer>
               {Object.entries(startedInstances).map(([key, value]) => (
                 <>
@@ -273,10 +308,10 @@ function DesktopRoot({ store }) {
                       duration: 0.3,
                       damping: 17,
                       stiffness: 300,
-                      delay: 0.25
+                      delay: 0.13
                     }}
                   >
-                    <NotificationContent>{key}</NotificationContent>
+                    <NotificationContent />
                   </Notification>
                   <motion.div
                     style={{
@@ -307,9 +342,7 @@ function DesktopRoot({ store }) {
                     }}
                     transition={{
                       type: 'spring',
-                      damping: 30,
-                      mass: 3,
-                      stiffness: 200
+                      duration: 0.8
                     }}
                   />
                 </>

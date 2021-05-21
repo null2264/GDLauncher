@@ -36,16 +36,9 @@ const Container = styled.div`
   position: relative;
   width: 130px;
   height: 130px;
-  transform: ${p =>
-    p.isHovered && !p.installing
-      ? 'scale3d(1.1, 1.1, 1.1)'
-      : 'scale3d(1, 1, 1)'};
   margin-right: 20px;
   margin-top: 20px;
   transition: transform 150ms ease-in-out;
-  /* &:hover {
-    ${p => (p.installing ? '' : 'transform: scale3d(1.1, 1.1, 1.1);')}
-  } */
 `;
 
 const Spinner = keyframes`
@@ -234,7 +227,7 @@ const Instance = ({ instanceName }) => {
             whileTap={{ scale: 0.9 }}
             installing={isInQueue}
             background={background}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.1 }}
           >
             <TimePlayed>
               <FontAwesomeIcon

@@ -45,6 +45,7 @@ import {
   faServer,
   faWindowClose
 } from '@fortawesome/free-solid-svg-icons';
+import Sidebar from './components/Sidebar';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -73,18 +74,18 @@ const InnerContainer = styled.div`
   width: calc(100vw - 250px);
 `;
 
-const Sidebar = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  max-width: 45px;
-  min-width: 45px;
+// const Sidebar = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-end;
+//   max-width: 45px;
+//   min-width: 45px;
 
-  margin: 10px;
-  border-radius: 5px;
+//   margin: 10px;
+//   border-radius: 5px;
 
-  /* background: ${props => props.theme.palette.grey[900]}; */
-`;
+//   /* background: ${props => props.theme.palette.grey[900]}; */
+// `;
 
 const SidebarInnerTopContainer = styled.div`
   height: 70%;

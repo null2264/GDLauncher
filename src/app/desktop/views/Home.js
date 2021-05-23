@@ -16,6 +16,7 @@ import {
 } from '../../../common/utils/selectors';
 import { extractFace } from '../utils';
 import { updateLastUpdateVersion } from '../../../common/reducers/actions';
+import Servers from '../components/Servers';
 
 const FixedRow = styled.div`
   position: fixed;
@@ -32,6 +33,8 @@ const Home = () => {
   const news = useSelector(state => state.news);
   const lastUpdateVersion = useSelector(state => state.app.lastUpdateVersion);
   // const instances = useSelector(_getInstances);
+
+  const [currentView, setCurrentView] = useState('clients');
 
   const openAddInstanceModal = defaultPage => {
     dispatch(openModal('AddInstance', { defaultPage }));
@@ -93,12 +96,15 @@ const Home = () => {
   return (
     <div>
       <News news={news} />
-      <Instances />
+      {currentView === 'clients' ? <Instances /> : <Servers />}
       <FixedRow>
         <Button type="primary" onClick={() => openAddInstanceModal(0)}>
           <FontAwesomeIcon icon={faPlus} />
         </Button>
-        <Radio.Group defaultValue="clients">
+        <Radio.Group
+          defaultValue="clients"
+          onChange={e => setCurrentView(e.target.value)}
+        >
           <Radio.Button value="clients">Clients</Radio.Button>
           <Radio.Button value="servers">Servers</Radio.Button>
         </Radio.Group>

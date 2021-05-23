@@ -94,6 +94,34 @@ function instances(state = { started: false, list: {} }, action) {
   }
 }
 
+function servers(state = { started: false, list: {} }, action) {
+  switch (action.type) {
+    case ActionTypes.UPDATE_SERVERS:
+      // eslint-disable-next-line
+      for (const instance1 in action.servers) {
+        const server = action.servers[instance1];
+        // eslint-disable-next-line
+        if (!server) continue;
+        if (!server.name) {
+          // eslint-disable-next-line
+          server.name = instance1;
+        }
+        if (state.list[server.name]?.queue) {
+          // eslint-disable-next-line
+          server.queue = state.list[server.name].queue;
+        } else {
+          // eslint-disable-next-line
+          server.queue = new PromiseQueue();
+        }
+      }
+      return { ...state, list: action.server };
+    case ActionTypes.UPDATE_SERVERS_STARTED:
+      return { ...state, started: action.started };
+    default:
+      return state;
+  }
+}
+
 function startedInstances(state = {}, action) {
   switch (action.type) {
     case ActionTypes.ADD_STARTED_INSTANCE:
@@ -120,10 +148,45 @@ function startedInstances(state = {}, action) {
   }
 }
 
+function startedServers(state = {}, action) {
+  switch (action.type) {
+    case ActionTypes.ADD_STARTED_SERVER:
+      return {
+        ...state,
+        [action.server.serverName]: {
+          pid: action.server.pid,
+          initialized: false,
+          position: action.server.position
+        }
+      };
+    case ActionTypes.UPDATE_STARTED_SERVER:
+      return {
+        ...state,
+        [action.server.serverName]: {
+          ...state[action.server.serverName],
+          initialized: true
+        }
+      };
+    case ActionTypes.REMOVE_STARTED_SERVER:
+      return omit(state, [action.serverName]);
+    default:
+      return state;
+  }
+}
+
 function selectedInstance(state = null, action) {
   switch (action.type) {
     case ActionTypes.UPDATE_SELECTED_INSTANCE:
       return action.instanceName;
+    default:
+      return state;
+  }
+}
+
+function selectedServer(state = null, action) {
+  switch (action.type) {
+    case ActionTypes.UPDATE_SELECTED_SERVER:
+      return action.serverName;
     default:
       return state;
   }
@@ -156,8 +219,11 @@ export default {
   downloadQueue,
   currentDownload,
   instances,
+  servers,
   startedInstances,
+  startedServers,
   selectedInstance,
+  selectedServer,
   updateAvailable,
   latestModManifests
 };

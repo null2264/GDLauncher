@@ -95,17 +95,15 @@ const HoverContainer = styled.div`
   font-weight: 800;
   border-radius: 20px;
   transition: opacity 150ms ease-in-out;
-
   width: 100%;
   height: 100%;
-
   opacity: ${p => (p.installing || p.isHovered ? '1' : '0')};
   backdrop-filter: blur(4px);
   will-change: opacity;
   background: ${p => transparentize(0.5, p.theme.palette.grey[800])};
-  &:hover {
+  /* &:hover {
     opacity: 1;
-  }
+  } */
 
   .spinner:before {
     animation: 1.5s linear infinite ${Spinner};

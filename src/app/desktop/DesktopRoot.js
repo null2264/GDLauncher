@@ -39,7 +39,6 @@ import useTrackIdle from './utils/useTrackIdle';
 import { openModal } from '../../common/reducers/modals/actions';
 import Message from './components/Message';
 import { ACCOUNT_MICROSOFT } from '../../common/utils/constants';
-import { position } from 'polished';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faGamepad,
@@ -80,14 +79,23 @@ const Sidebar = styled.div`
   justify-content: flex-end;
   max-width: 45px;
   min-width: 45px;
-  background: ${props => props.theme.palette.grey[900]};
+
+  margin: 10px;
+  border-radius: 5px;
+
+  /* background: ${props => props.theme.palette.grey[900]}; */
 `;
 
 const SidebarInnerTopContainer = styled.div`
   height: 70%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
   justify-content: center;
   padding-top: 10px;
+  border-radius: 5px;
+  background: ${props => props.theme.palette.grey[900]};
 `;
 
 const SidebarInnerBottomContainer = styled.div`
@@ -95,13 +103,16 @@ const SidebarInnerBottomContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 10px;
+  border-radius: 5px;
   justify-content: center;
+  background: ${props => props.theme.palette.grey[900]};
 `;
 
 const NotificationContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
   align-items: center;
   padding: 5px;
   height: 100%;
@@ -148,6 +159,8 @@ const NotificationContent = styled.div`
   background: ${props => props.theme.palette.grey[800]};
   height: calc(100% - 2px);
   width: calc(100% - 2px);
+  /* border-radius: 50%; */
+  border-radius: 5px;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -292,8 +305,9 @@ function DesktopRoot({ store }) {
           <Sidebar>
             <SidebarInnerTopContainer>
               <FontAwesomeIcon icon={faServer} />
+              <NotificationContainer></NotificationContainer>
             </SidebarInnerTopContainer>
-            <hr />
+            {/* <hr /> */}
             <SidebarInnerBottomContainer>
               <FontAwesomeIcon icon={faGamepad} />
               <NotificationContainer>
@@ -322,7 +336,7 @@ function DesktopRoot({ store }) {
                         top: value.position.y,
                         left: value.position.x,
                         background: theme.palette.grey[900],
-                        border: `2px solid ${theme.palette.colors.green}`,
+                        border: `2px solid ${theme.palette.colors.yellow}`,
                         height: '100px',
                         width: '100px',
                         borderRadius: '10px'

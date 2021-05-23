@@ -4,6 +4,7 @@ import memoize from 'lodash/memoize';
 import { convertOSToJavaFormat } from '../../app/desktop/utils';
 
 const _instances = state => state.instances;
+const _servers = state => state.servers;
 const _accounts = state => state.app.accounts;
 const _java = state => state.settings.java;
 const _currentAccountId = state => state.app.currentAccountId;
@@ -16,8 +17,16 @@ export const _getInstances = createSelector(_instances, instances =>
   Object.values(instances.list)
 );
 
+export const _getServers = createSelector(_servers, servers =>
+  Object.values(servers.list)
+);
+
 export const _getInstance = createSelector(_instances, instances =>
   memoize(instance => instances.list[instance])
+);
+
+export const _getServer = createSelector(_servers, servers =>
+  memoize(server => servers.list[server])
 );
 
 export const _getCurrentAccount = createSelector(

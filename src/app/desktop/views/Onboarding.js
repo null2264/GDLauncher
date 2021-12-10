@@ -11,7 +11,7 @@ import {
 import backgroundVideo from '../../../common/assets/onboarding.webm';
 import { _getCurrentAccount } from '../../../common/utils/selectors';
 import KoFiButton from '../../../common/assets/ko-fi.png';
-import { openModal } from '../../../common/reducers/modals/actions';
+// import { openModal } from '../../../common/reducers/modals/actions';
 
 const Background = styled.div`
   position: absolute;

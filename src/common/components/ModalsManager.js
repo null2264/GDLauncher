@@ -61,7 +61,7 @@ const modalsComponentLookupTable = {
   AutoUpdatesNotAvailable: AsyncComponent(
     lazy(() => import('../modals/AutoUpdatesNotAvailable'))
   ),
-  BisectHosting: AsyncComponent(lazy(() => import('../modals/BisectHosting'))),
+  // BisectHosting: AsyncComponent(lazy(() => import('../modals/BisectHosting'))),
   Onboarding: AsyncComponent(lazy(() => import('../modals/Onboarding'))),
   ModOverview: AsyncComponent(lazy(() => import('../modals/ModOverview'))),
   ModChangelog: AsyncComponent(lazy(() => import('../modals/ModChangelog'))),

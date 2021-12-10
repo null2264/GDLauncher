@@ -188,7 +188,6 @@ const Instance = ({ instanceName }) => {
     if (isInQueue || isPlaying) return;
     dispatch(addStartedInstance({ instanceName }));
     dispatch(launchInstance(instanceName));
-    dispatch(openModal('InstanceStartupAd', { instanceName }));
   };
   const openFolder = () => {
     ipcRenderer.invoke('openFolder', path.join(instancesPath, instance.name));
@@ -198,9 +197,6 @@ const Instance = ({ instanceName }) => {
   };
   const manageInstance = () => {
     dispatch(openModal('InstanceManager', { instanceName }));
-  };
-  const openBisectModal = () => {
-    dispatch(openModal('BisectHosting'));
   };
   const instanceExportCurseForge = () => {
     dispatch(openModal('InstanceExportCurseForge', { instanceName }));
@@ -385,22 +381,6 @@ const Instance = ({ instanceName }) => {
             Delete
           </MenuItem>
           <MenuItem divider />
-          <MenuItem
-            onClick={openBisectModal}
-            preventClose
-            css={`
-              border: 2px solid #04cbeb;
-              border-radius: 5px;
-            `}
-          >
-            <FontAwesomeIcon
-              icon={faServer}
-              css={`
-                margin-right: 10px;
-              `}
-            />
-            Create Server
-          </MenuItem>
         </ContextMenu>
       </Portal>
     </>

@@ -128,19 +128,6 @@ const Home = () => {
         </div>
       </div>
       <div
-        ref={thirdSlideRef}
-        css={`
-          height: 100%;
-          width: 100%;
-          background: ${props => props.theme.palette.grey[700]};
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        `}
-      >
-      </div>
-      <div
         ref={forthSlideRef}
         css={`
           height: 100%;

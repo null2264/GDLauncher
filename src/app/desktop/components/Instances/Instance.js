@@ -15,8 +15,8 @@ import {
   faTrash,
   faStop,
   faBoxOpen,
-  faCopy,
-  faServer
+  faCopy
+  // faServer
 } from '@fortawesome/free-solid-svg-icons';
 import psTree from 'ps-tree';
 import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu';

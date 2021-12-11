@@ -16,9 +16,8 @@ import { openModal } from '../../../common/reducers/modals/actions';
 import {
   checkForPortableUpdates,
   updateUpdateAvailable,
-  getAppLatestVersion
+  isNewVersionAvailable
 } from '../../../common/reducers/actions';
-import BisectHosting from '../../../ui/BisectHosting';
 import Logo from '../../../ui/Logo';
 
 const SystemNavbar = () => {
@@ -53,7 +52,7 @@ const SystemNavbar = () => {
         .then(v => dispatch(updateUpdateAvailable(Boolean(v))))
         .catch(console.error);
     } else {
-      dispatch(getAppLatestVersion())
+      dispatch(isNewVersionAvailable())
         .then(v => dispatch(updateUpdateAvailable(Boolean(v))))
         .catch(console.error);
     }
@@ -173,31 +172,13 @@ const SystemNavbar = () => {
               rel="noopener noreferrer"
               css={`
                 margin-top: 5px;
+                margin-right: 5px;
                 -webkit-app-region: no-drag;
               `}
             >
               <Logo size={35} pointerCursor />
             </a>
             <DevtoolButton />
-          </div>
-          <div
-            css={`
-              display: flex;
-              height: 100%;
-            `}
-          >
-            <div
-              css={`
-                white-space: nowrap;
-              `}
-            >
-              Partnered with &nbsp;&nbsp;
-            </div>
-            <BisectHosting
-              showPointerCursor
-              onClick={() => dispatch(openModal('BisectHosting'))}
-            />
-            {/* <PulsatingCircle /> */}
           </div>
         </>
       )}
@@ -274,19 +255,6 @@ const SystemNavbar = () => {
       </Container>
       {isOsx && (
         <>
-          <div
-            css={`
-              display: flex;
-              height: 100%;
-            `}
-          >
-            Partnered with &nbsp;&nbsp;
-            <BisectHosting
-              showPointerCursor
-              onClick={() => dispatch(openModal('BisectHosting'))}
-            />
-            {/* <PulsatingCircle /> */}
-          </div>
           <div>
             <DevtoolButton />
             <a
@@ -294,6 +262,7 @@ const SystemNavbar = () => {
               rel="noopener noreferrer"
               css={`
                 margin-top: 5px;
+                margin-right: 5px;
                 -webkit-app-region: no-drag;
               `}
             >

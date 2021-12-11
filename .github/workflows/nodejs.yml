@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
 
     steps:
       - name: Context
@@ -37,20 +37,6 @@ jobs:
       - name: npm run lint
         run: |
           npm run lint
-      - name: npm run release for windows
-        if: matrix.os == 'windows-latest' && github.event_name == 'push'
-        env:
-          CI: ''
-          TRAVIS_TAG: ''
-          APPVEYOR_REPO_TAG_NAME: ''
-          CIRCLE_TAG: ''
-          BITRISE_GIT_TAG: ''
-          CI_BUILD_TAG: ''
-          RELEASE_TESTING: true
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-        run: |
-          npm run release
       - name: npm run release for mac and linux
         if: matrix.os != 'windows-latest' || github.event_name != 'push'
         env:
@@ -58,9 +44,12 @@ jobs:
           TRAVIS_TAG: ''
           APPVEYOR_REPO_TAG_NAME: ''
           CIRCLE_TAG: ''
+          GITHUB_ACTIONS: ''
           BITRISE_GIT_TAG: ''
           CI_BUILD_TAG: ''
-          RELEASE_TESTING: true
+          SENTRY_DSN: "${{ github.ref == 'refs/heads/releases' && secrets.SENTRY_DSN || '' }}"
+          SOURCE_MAPS_UPLOAD: "${{ github.ref == 'refs/heads/releases' && secrets.SENTRY_UPLOAD_SOURCE_MAPS_URL || '' }}"
+          SENTRY_AUTH: "${{ github.ref == 'refs/heads/releases' && secrets.SENTRY_AUTH || '' }}"
         run: |
           npm run release
       - name: upload release to gh releases
@@ -73,12 +62,6 @@ jobs:
         if: matrix.os == 'macos-latest'
         with:
           name: MacOs Release
-          path: deploy
-
-      - uses: actions/upload-artifact@v1
-        if: matrix.os == 'windows-latest'
-        with:
-          name: Windows Release
           path: deploy
 
       - uses: actions/upload-artifact@v1
